@@ -1,7 +1,8 @@
 import os
 
 const
-  baseDir =  "soloud"
+  filelen = "soloud.nim/".len
+  baseDir =  currentSourcePath()[0..^filelen] & "/soloud"
   incl = baseDir & "/include"
   src = baseDir & "/src"
 
