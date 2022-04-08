@@ -1,0 +1,3 @@
+[submodule "nimsoloud/soloud"]
+	path = nimsoloud/soloud
+	url = https://github.com/Anuken/soloud.git
