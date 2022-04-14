@@ -61,8 +61,14 @@ else:
 {.compile: baseDir & "/src/core/soloud_misc.cpp".}
 {.compile: baseDir & "/src/core/soloud_queue.cpp".}
 {.compile: baseDir & "/src/core/soloud_thread.cpp".}
-{.compile: baseDir & "/src/audiosource/wav/soloud_wav_ogg.cpp".}
-{.compile: baseDir & "/src/audiosource/wav/soloud_wavstream_ogg.cpp".}
+
+when defined(soloudAllFormats):
+  {.compile: baseDir & "/src/audiosource/wav/soloud_wav.cpp".}
+  {.compile: baseDir & "/src/audiosource/wav/soloud_wavstream.cpp".}
+else:
+  {.compile: baseDir & "/src/audiosource/wav/soloud_wav_ogg.cpp".}
+  {.compile: baseDir & "/src/audiosource/wav/soloud_wavstream_ogg.cpp".}
+
 {.compile: baseDir & "/src/audiosource/wav/stb_vorbis.c".}
 {.compile: baseDir & "/src/filter/soloud_bassboostfilter.cpp".}
 {.compile: baseDir & "/src/filter/soloud_biquadresonantfilter.cpp".}

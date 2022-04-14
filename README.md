@@ -6,5 +6,5 @@ A static wrapper of my fork of [Soloud](https://github.com/Anuken/soloud).
 
 Notable differences:
 
-- Only ogg decoding is supported, to reduce binary size and improve compilation speeds
-- All audio sources except Wav and WavStream have been removed
+- Only ogg decoding is supported by default, to reduce binary size and improve compilation speeds. Define `-d:soloudAllFormats` to include support for MP3/FLAC/WAV.
+- All audio sources except Wav and WavStream have been removed.
