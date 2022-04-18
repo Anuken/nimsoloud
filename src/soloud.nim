@@ -143,25 +143,23 @@ type
   AudioCollider* {.importc, libsoloud.} = pointer
   AudioAttenuator* {.importc, libsoloud.} = pointer
   AudioSource* {.importc, libsoloud.} = pointer
+  Bus* {.importc, libsoloud.} = pointer
+  Fader* {.importc, libsoloud.} = pointer
+  Queue* {.importc, libsoloud.} = pointer
+  Wav* {.importc, libsoloud.} = pointer
+  WavStream* {.importc, libsoloud.} = pointer
+  File* {.importc, libsoloud.} = pointer
+  Filter* {.importc, libsoloud.} = pointer
   BassboostFilter* {.importc, libsoloud.} = pointer
   BiquadResonantFilter* {.importc, libsoloud.} = pointer
-  Bus* {.importc, libsoloud.} = pointer
   DCRemovalFilter* {.importc, libsoloud.} = pointer
   EchoFilter* {.importc, libsoloud.} = pointer
-  Fader* {.importc, libsoloud.} = pointer
   FFTFilter* {.importc, libsoloud.} = pointer
-  Filter* {.importc, libsoloud.} = pointer
   FlangerFilter* {.importc, libsoloud.} = pointer
   FreeverbFilter* {.importc, libsoloud.} = pointer
   LofiFilter* {.importc, libsoloud.} = pointer
-  Queue* {.importc, libsoloud.} = pointer
   RobotizeFilter* {.importc, libsoloud.} = pointer
-  Sfxr* {.importc, libsoloud.} = pointer
-  Speech* {.importc, libsoloud.} = pointer
-  Wav* {.importc, libsoloud.} = pointer
   WaveShaperFilter* {.importc, libsoloud.} = pointer
-  WavStream* {.importc, libsoloud.} = pointer
-  File* {.importc, libsoloud.} = pointer
 
 {.push importc, cdecl, header: baseDir & "/include/soloud_c.h".}
 
