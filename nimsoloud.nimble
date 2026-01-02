@@ -1,5 +1,5 @@
 
-version     = "1.0.1"
+version     = "20251201"
 author      = "Anuke"
 description = "Static, minimal wrapper of Soloud"
 license     = "MIT"

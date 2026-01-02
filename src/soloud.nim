@@ -1,5 +1,3 @@
-import os
-
 const
   filelen = "soloud.nim/".len
   baseDir =  currentSourcePath()[0..^filelen] & "/soloud"
@@ -20,7 +18,7 @@ when defined(emscripten):
 elif defined(osx):
   cDefine("WITH_COREAUDIO")
   {.passL: "-framework CoreAudio -framework AudioToolbox".}
-  {.compile: src & "/backend/coreaudio/soloud_coreaudio.cpp".}
+  {.compile: src & "/backend/coreaudio/soloud_coreaudio.mm".}
 elif defined(Android):
   cDefine("WITH_MINIAUDIO")
   {.compile: src & "/backend/miniaudio/soloud_miniaudio.cpp".}
@@ -178,15 +176,15 @@ proc Soloud_getBackendBufferSize*(aSoloud: ptr Soloud): cuint
 proc Soloud_setSpeakerPosition*(aSoloud: ptr Soloud; aChannel: cuint; aX: cfloat; aY: cfloat; aZ: cfloat): cint
 proc Soloud_getSpeakerPosition*(aSoloud: ptr Soloud; aChannel: cuint; aX: ptr cfloat; aY: ptr cfloat; aZ: ptr cfloat): cint
 proc Soloud_play*(aSoloud: ptr Soloud; aSound: ptr AudioSource): cuint
-proc Soloud_playEx*(aSoloud: ptr Soloud; aSound: ptr AudioSource; aVolume: cfloat; aPan: cfloat; aPaused: cint; aBus: cuint): cuint
+proc Soloud_playEx*(aSoloud: ptr Soloud; aSound: ptr AudioSource; aVolume: cfloat; aPan: cfloat; aPitch: cfloat; aPaused: cint; aLoop: cint, aBus: cuint): cuint
 proc Soloud_playClocked*(aSoloud: ptr Soloud; aSoundTime: cdouble; aSound: ptr AudioSource): cuint
-proc Soloud_playClockedEx*(aSoloud: ptr Soloud; aSoundTime: cdouble; aSound: ptr AudioSource; aVolume: cfloat; aPan: cfloat; aBus: cuint): cuint
+proc Soloud_playClockedEx*(aSoloud: ptr Soloud; aSoundTime: cdouble; aSound: ptr AudioSource; aVolume: cfloat; aPan: cfloat; aPitch: cfloat; aPaused: cint; aLoop: cint, aBus: cuint): cuint
 proc Soloud_play3d*(aSoloud: ptr Soloud; aSound: ptr AudioSource; aPosX: cfloat;  aPosY: cfloat; aPosZ: cfloat): cuint
 proc Soloud_play3dEx*(aSoloud: ptr Soloud; aSound: ptr AudioSource; aPosX: cfloat;  aPosY: cfloat; aPosZ: cfloat; aVelX: cfloat; aVelY: cfloat;  aVelZ: cfloat; aVolume: cfloat; aPaused: cint; aBus: cuint): cuint
 proc Soloud_play3dClocked*(aSoloud: ptr Soloud; aSoundTime: cdouble; aSound: ptr AudioSource; aPosX: cfloat; aPosY: cfloat; aPosZ: cfloat): cuint
 proc Soloud_play3dClockedEx*(aSoloud: ptr Soloud; aSoundTime: cdouble; aSound: ptr AudioSource; aPosX: cfloat; aPosY: cfloat; aPosZ: cfloat; aVelX: cfloat; aVelY: cfloat; aVelZ: cfloat; aVolume: cfloat; aBus: cuint): cuint
 proc Soloud_playBackground*(aSoloud: ptr Soloud; aSound: ptr AudioSource): cuint
-proc Soloud_playBackgroundEx*(aSoloud: ptr Soloud; aSound: ptr AudioSource;  aVolume: cfloat; aPaused: cint; aBus: cuint): cuint
+proc Soloud_playBackgroundEx*(aSoloud: ptr Soloud; aSound: ptr AudioSource;  aVolume: cfloat; aPan: cfloat; aPitch: cfloat; aPaused: cint; aLoop: cint, aBus: cuint): cuint
 proc Soloud_seek*(aSoloud: ptr Soloud; aVoiceHandle: cuint; aSeconds: cdouble): cint
 proc Soloud_stop*(aSoloud: ptr Soloud; aVoiceHandle: cuint)
 proc Soloud_stopAll*(aSoloud: ptr Soloud)
@@ -289,7 +287,7 @@ proc Bus_destroy*(aBus: ptr Bus)
 proc Bus_create*(): ptr Bus
 proc Bus_setFilter*(aBus: ptr Bus; aFilterId: cuint; aFilter: ptr Filter)
 proc Bus_play*(aBus: ptr Bus; aSound: ptr AudioSource): cuint
-proc Bus_playEx*(aBus: ptr Bus; aSound: ptr AudioSource; aVolume: cfloat; aPan: cfloat;   aPaused: cint): cuint
+proc Bus_playEx*(aBus: ptr Bus; aSound: ptr AudioSource; aVolume: cfloat; aPan: cfloat; aPitch: cfloat; aPaused: cint; aLoop: cint): cuint
 proc Bus_playClocked*(aBus: ptr Bus; aSoundTime: cdouble; aSound: ptr AudioSource): cuint
 proc Bus_playClockedEx*(aBus: ptr Bus; aSoundTime: cdouble; aSound: ptr AudioSource;    aVolume: cfloat; aPan: cfloat): cuint
 proc Bus_play3d*(aBus: ptr Bus; aSound: ptr AudioSource; aPosX: cfloat; aPosY: cfloat;   aPosZ: cfloat): cuint
@@ -412,6 +410,9 @@ proc Wav_loadRawWaveEx*(aWav: ptr Wav; aMem: ptr cfloat; aLength: cuint;    aSam
 proc Wav_getLength*(aWav: ptr Wav): cdouble
 proc Wav_setVolume*(aWav: ptr Wav; aVolume: cfloat)
 proc Wav_setLooping*(aWav: ptr Wav; aLoop: cint)
+proc Wav_setConcurrentGroup*(aWav: ptr Wav; aConcurrentGroup: cint)
+proc Wav_setMaxConcurrent*(aWav: ptr Wav; aGroup: cint)
+proc Wav_setMinConcurrentInterrupt*(aWav: ptr Wav; aMinConcurrentInterrupt: cfloat)
 proc Wav_set3dMinMaxDistance*(aWav: ptr Wav; aMinDistance: cfloat;  aMaxDistance: cfloat)
 proc Wav_set3dAttenuation*(aWav: ptr Wav; aAttenuationModel: cuint; aAttenuationRolloffFactor: cfloat)
 proc Wav_set3dDopplerFactor*(aWav: ptr Wav; aDopplerFactor: cfloat)
@@ -444,6 +445,9 @@ proc WavStream_loadFileToMem*(aWavStream: ptr WavStream; aFile: ptr File): cint
 proc WavStream_getLength*(aWavStream: ptr WavStream): cdouble
 proc WavStream_setVolume*(aWavStream: ptr WavStream; aVolume: cfloat)
 proc WavStream_setLooping*(aWavStream: ptr WavStream; aLoop: cint)
+proc WavStream_setConcurrentGroup*(aWavStream: ptr WavStream; aConcurrentGroup: cint)
+proc WavStream_setMaxConcurrent*(aWavStream: ptr WavStream; aGroup: cint)
+proc WavStream_setMinConcurrentInterrupt*(aWavStream: ptr WavStream; aMinConcurrentInterrupt: cfloat)
 proc WavStream_set3dMinMaxDistance*(aWavStream: ptr WavStream; aMinDistance: cfloat;  aMaxDistance: cfloat)
 proc WavStream_set3dAttenuation*(aWavStream: ptr WavStream;   aAttenuationModel: cuint;   aAttenuationRolloffFactor: cfloat)
 proc WavStream_set3dDopplerFactor*(aWavStream: ptr WavStream; aDopplerFactor: cfloat)
