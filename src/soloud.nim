@@ -9,7 +9,8 @@ template cDefine(sym: string) =
 
 {.passC: "-I" & incl.}
 
-cDefine("SOLOUD_OGG_ONLY")
+when not defined(soloudAllFormats):
+  cDefine("SOLOUD_OGG_ONLY")
 
 when defined(emscripten):
   {.passL: "-lpthread".}
@@ -61,11 +62,10 @@ else:
 {.compile: baseDir & "/src/core/soloud_thread.cpp".}
 
 when defined(soloudAllFormats):
-  {.compile: baseDir & "/src/audiosource/wav/soloud_wav.cpp".}
-  {.compile: baseDir & "/src/audiosource/wav/soloud_wavstream.cpp".}
-else:
-  {.compile: baseDir & "/src/audiosource/wav/soloud_wav_ogg.cpp".}
-  {.compile: baseDir & "/src/audiosource/wav/soloud_wavstream_ogg.cpp".}
+  {.compile: baseDir & "/src/audiosource/wav/dr_impl.cpp".}
+
+{.compile: baseDir & "/src/audiosource/wav/soloud_wav.cpp".}
+{.compile: baseDir & "/src/audiosource/wav/soloud_wavstream.cpp".}
 
 {.compile: baseDir & "/src/audiosource/wav/stb_vorbis.c".}
 {.compile: baseDir & "/src/filter/soloud_bassboostfilter.cpp".}
@@ -95,11 +95,10 @@ const
   SOLOUD_OPENAL* = 10.cint
   SOLOUD_COREAUDIO* = 11.cint
   SOLOUD_OPENSLES* = 12.cint
-  SOLOUD_VITA_HOMEBREW* = 13.cint
-  SOLOUD_MINIAUDIO* = 14.cint
-  SOLOUD_NOSOUND* = 15.cint
-  SOLOUD_NULLDRIVER* = 16.cint
-  SOLOUD_BACKEND_MAX* = 17.cint
+  SOLOUD_MINIAUDIO* = 13.cint
+  SOLOUD_NOSOUND* = 14.cint
+  SOLOUD_NULLDRIVER* = 15.cint
+  SOLOUD_BACKEND_MAX* = 16.cint
   SOLOUD_CLIP_ROUNDOFF* = 1.cint
   SOLOUD_ENABLE_VISUALIZATION* = 2.cint
   SOLOUD_LEFT_HANDED_3D* = 4.cint
@@ -189,6 +188,7 @@ proc Soloud_seek*(aSoloud: ptr Soloud; aVoiceHandle: cuint; aSeconds: cdouble): 
 proc Soloud_stop*(aSoloud: ptr Soloud; aVoiceHandle: cuint)
 proc Soloud_stopAll*(aSoloud: ptr Soloud)
 proc Soloud_stopAudioSource*(aSoloud: ptr Soloud; aSound: ptr AudioSource)
+proc Soloud_stopAudioSourceEx*(aSoloud: ptr Soloud; aSound: ptr AudioSource; aFade: cint)
 proc Soloud_countAudioSource*(aSoloud: ptr Soloud; aSound: ptr AudioSource): cint
 proc Soloud_setFilterParameter*(aSoloud: ptr Soloud; aVoiceHandle: cuint;  aFilterId: cuint; aAttributeId: cuint; aValue: cfloat)
 proc Soloud_getFilterParameter*(aSoloud: ptr Soloud; aVoiceHandle: cuint;  aFilterId: cuint; aAttributeId: cuint): cfloat
